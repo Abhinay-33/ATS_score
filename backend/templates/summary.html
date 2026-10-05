@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ATS Resume Report</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 35px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+
+        h1 {
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 6px;
+            margin-top: 28px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .date {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .score {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-number {
+            font-size: 52px;
+            font-weight: bold;
+            color: {{ score_color }};
+        }
+
+        .interpretation {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .component {
+            margin: 14px 0;
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .bar {
+            width: 100%;
+            height: 12px;
+            background: #e5e7eb;
+            border-radius: 6px;
+        }
+
+        .fill {
+            height: 12px;
+            background: {{ score_color }};
+            border-radius: 6px;
+        }
+
+        .strength {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        .issue {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 6px;
+            background: #f9fafb;
+        }
+
+        .high {
+            border-left: 4px solid #dc2626;
+        }
+
+        .medium {
+            border-left: 4px solid #d97706;
+        }
+
+        .low {
+            border-left: 4px solid #16a34a;
+        }
+
+        .severity {
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .footer {
+            margin-top: 35px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>ATS Resume Analysis Report</h1>
+    <div class="date">{{ timestamp|format_date }}</div>
+</div>
+
+<div class="score">
+    <div>Overall ATS Score</div>
+    <div class="score-number">{{ overall_score }}/100</div>
+</div>
+
+{% if interpretation %}
+<div class="interpretation">
+    <strong>Interpretation:</strong><br>
+    {{ interpretation }}
+</div>
+{% endif %}
+
+<h2>Score Breakdown</h2>
+
+{% for name, score in component_scores.items() %}
+<div class="component">
+    <div class="component-header">
+        <span>{{ name|replace('_', ' ')|title }}</span>
+        <span>{{ score }}</span>
+    </div>
+
+    <div class="bar">
+        <div class="fill" style="width: {{ component_pct[name] }}%;"></div>
+    </div>
+</div>
+{% endfor %}
+
+{% if strengths %}
+<h2>Strengths</h2>
+
+{% for strength in strengths %}
+<div class="strength">
+    {{ strength }}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if high_priority %}
+<h2>High Priority Issues</h2>
+
+{% for item in high_priority %}
+<div class="issue high">
+    <div class="severity">High Priority</div>
+    <strong>{{ item.get('title', item.get('issue', 'Issue')) }}</strong>
+
+    {% if item.get('description') %}
+    <p>{{ item.get('description') }}</p>
+    {% endif %}
+
+    {% if item.get('recommendation') %}
+    <p><strong>Recommendation:</strong> {{ item.get('recommendation') }}</p>
+    {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if medium_priority %}
+<h2>Medium Priority Issues</h2>
+
+{% for item in medium_priority %}
+<div class="issue medium">
+    <div class="severity">Medium Priority</div>
+    <strong>{{ item.get('title', item.get('issue', 'Issue')) }}</strong>
+
+    {% if item.get('description') %}
+    <p>{{ item.get('description') }}</p>
+    {% endif %}
+
+    {% if item.get('recommendation') %}
+    <p><strong>Recommendation:</strong> {{ item.get('recommendation') }}</p>
+    {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if low_priority %}
+<h2>Other Feedback</h2>
+
+{% for item in low_priority %}
+<div class="issue low">
+    <div class="severity">Low Priority</div>
+    <strong>{{ item.get('title', item.get('issue', 'Feedback')) }}</strong>
+
+    {% if item.get('description') %}
+    <p>{{ item.get('description') }}</p>
+    {% endif %}
+
+    {% if item.get('recommendation') %}
+    <p><strong>Recommendation:</strong> {{ item.get('recommendation') }}</p>
+    {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="footer">
+    Generated by ATS Resume Analyzer
+</div>
+
+</body>
+</html>

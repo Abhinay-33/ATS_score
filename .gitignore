@@ -1,0 +1,28 @@
+# Environment variables / secrets
+.env
+backend/.env
+frontend/.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Generated files
+*.pdf
+
+# Application logs
+backend/logs/
